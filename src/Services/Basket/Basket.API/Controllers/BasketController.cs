@@ -6,8 +6,8 @@ using System.Net;
 
 namespace Basket.API.Controllers
 {
-    [Route("api/v1/[controller]")]
     [ApiController]
+    [Route("api/v1/[controller]")]
     public class BasketController : ControllerBase
     {
         private readonly IBasketRepository _repository;
@@ -33,7 +33,7 @@ namespace Basket.API.Controllers
             return Ok(updatedBasket);
         }
 
-        [HttpGet("{userName}", Name = "DeleteBasket")]
+        [HttpDelete("{userName}", Name = "DeleteBasket")]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<ShoppingCart>> DeleteBasket(string userName)
         {
