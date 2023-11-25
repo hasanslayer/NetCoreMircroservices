@@ -12,16 +12,15 @@ namespace Basket.API
             builder.Services.AddAuthorization();
             builder.Services.AddStackExchangeRedisCache(options =>
             {
-                options.Configuration = builder.Configuration.GetSection("CacheSettings:ConnectionString").Value;
+                options.Configuration = builder.Configuration.GetValue<string>("CacheSettings:ConnectionString");
             });
 
+            builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddScoped<IBasketRepository, BasketRepository>();
-
-             builder.Services.AddControllers();
 
             var app = builder.Build();
 
@@ -33,6 +32,8 @@ namespace Basket.API
             }
 
             app.UseAuthorization();
+
+            app.MapControllers();
 
             app.Run();
         }
