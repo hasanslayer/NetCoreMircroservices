@@ -1,4 +1,5 @@
 using Discount.API.Entities.Repositories;
+using Discount.API.Extensions;
 
 namespace Discount.API
 {
@@ -18,6 +19,8 @@ namespace Discount.API
             builder.Services.AddScoped<IDiscountRepository, DiscountRepository>();
 
             var app = builder.Build();
+            app.MigrateDatabase<Program>();
+
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
