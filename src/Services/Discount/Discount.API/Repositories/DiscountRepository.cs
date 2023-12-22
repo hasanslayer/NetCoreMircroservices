@@ -1,7 +1,8 @@
 ﻿using Dapper;
+using Discount.API.Entities;
 using Npgsql;
 
-namespace Discount.API.Entities.Repositories
+namespace Discount.API.Repositories
 {
     public class DiscountRepository : IDiscountRepository
     {
@@ -34,7 +35,7 @@ namespace Discount.API.Entities.Repositories
 
             var affected = await connetion.ExecuteAsync
                 ("INSERT INTO Coupon (ProductName, Description, Amount) VALUES (@ProductName, @Description, @Amount)",
-                new { ProductName = coupon.ProductName, Description = coupon.Description, Amount = coupon.Amount });
+                new { coupon.ProductName, coupon.Description, coupon.Amount });
 
             return affected != 0;
         }
@@ -45,7 +46,7 @@ namespace Discount.API.Entities.Repositories
 
             var affected = await connetion.ExecuteAsync
                 ("UPDATE Coupon SET ProductName=@ProductName, Description=@Description, Amount=@Amount WHERE Id = @Id",
-                new { ProductName = coupon.ProductName, Description = coupon.Description, Amount = coupon.Amount, Id = coupon.Id });
+                new { coupon.ProductName, coupon.Description, coupon.Amount, coupon.Id });
 
             return affected != 0;
         }
