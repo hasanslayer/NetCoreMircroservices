@@ -14,7 +14,7 @@ namespace Discount.API.Controllers
 
         public DiscountController(IDiscountRepository repository)
         {
-            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _repository = repository;
         }
 
         [HttpGet("{productName}", Name = "GetDiscount")]
