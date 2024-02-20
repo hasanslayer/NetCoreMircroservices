@@ -18,4 +18,4 @@ namespace Ordering.Infrastructure.Repositories
         }
     }
 }
-}
+
