@@ -27,7 +27,7 @@ namespace Ordering.Infrastructure.Persistence
                     EmailAddress = "hasan@mail.com",
                     FirstName = "Hasan",
                     LastName = "Darwish",
-                    TotalPrice = 350
+                    TotalPrice = 350,
                 }
             };
         }

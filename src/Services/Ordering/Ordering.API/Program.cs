@@ -13,6 +13,7 @@ namespace Ordering.API
 
             // Add services to the container.
             builder.Services.AddAuthorization();
+            builder.Services.AddControllers();
             builder.Services.AddApplicationServices();
             builder.Services.AddInfrastructureServices(builder.Configuration);
 
@@ -36,7 +37,7 @@ namespace Ordering.API
             }
 
             app.UseAuthorization();
-
+            app.MapControllers();
             app.Run();
         }
     }
