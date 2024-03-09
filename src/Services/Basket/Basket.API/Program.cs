@@ -1,6 +1,7 @@
 using Basket.API.GrpcServices;
 using Basket.API.Repositories;
 using Discount.Grpc.Protos;
+using MassTransit;
 
 namespace Basket.API
 {
@@ -27,6 +28,16 @@ namespace Basket.API
                 o => o.Address = new Uri(builder.Configuration["GrpcSettings:DiscountUrl"]));
 
             builder.Services.AddScoped<DiscountGrpcService>();
+
+            // MassTransit-RabbitMQ Configuration
+            builder.Services.AddMassTransit(config =>
+            {
+                config.UsingRabbitMq((context, configurator) =>
+                {
+                    configurator.Host(builder.Configuration["EventBusSettings:HostAddress"]); // username and password is : guest
+                });
+            });
+            builder.Services.AddMassTransitHostedService();
 
             var app = builder.Build();
 
