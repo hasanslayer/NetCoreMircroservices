@@ -5,6 +5,7 @@ using Ordering.API.Extensions;
 using Ordering.Application;
 using Ordering.Infrastructure;
 using Ordering.Infrastructure.Persistence;
+using System.Reflection;
 
 namespace Ordering.API
 {
@@ -19,6 +20,9 @@ namespace Ordering.API
             builder.Services.AddControllers();
             builder.Services.AddApplicationServices();
             builder.Services.AddInfrastructureServices(builder.Configuration);
+
+            builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            builder.Services.AddScoped<BasketCheckoutConsumer>();
 
             // MassTransit-RabbitMQ Configuration
             builder.Services.AddMassTransit(config =>
