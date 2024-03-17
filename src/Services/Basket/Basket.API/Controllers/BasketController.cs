@@ -76,7 +76,7 @@ namespace Basket.API.Controllers
             // create basketCheckoutEvent --  set totalprice on basketcheckout eventMessage
 
             // send checkout event to rabbitmq
-            var eventMessage = _mapper.Map<BasketCheckoutEvent>(basketCheckout);
+            var eventMessage = _mapper.Map<BasketCheckoutEvent>(basketCheckout); // so it will consumed by IConsumer<BasketCheckoutConsumer> in  Ordering.API
             eventMessage.TotalPrice = basket.TotalPrice; // calculated from discount grpc automatically 
             await _publishEndpoint.Publish(eventMessage);
             // remove the basket
