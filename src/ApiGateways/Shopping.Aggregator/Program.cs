@@ -1,3 +1,5 @@
+using Shopping.Aggregator.Services;
+
 namespace Shopping.Aggregator
 {
     public class Program
@@ -12,6 +14,10 @@ namespace Shopping.Aggregator
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddHttpClient<ICatalogService, CatalogService>(c => c.BaseAddress = new Uri(builder.Configuration["ApiSettings:CatalogUrl"]));
+            builder.Services.AddHttpClient<IBasketService, BasketService>(c => c.BaseAddress = new Uri(builder.Configuration["ApiSettings:BasketUrl"]));
+            builder.Services.AddHttpClient<ICatalogService, OrderService>(c => c.BaseAddress = new Uri(builder.Configuration["ApiSettings:OrderUrl"]));
 
             var app = builder.Build();
 
