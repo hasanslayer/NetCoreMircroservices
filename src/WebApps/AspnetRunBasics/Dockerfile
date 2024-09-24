@@ -7,17 +7,17 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["WebApps/AspnetRunBasicsNet/AspnetRunBasicsNet.csproj", "WebApps/AspnetRunBasicsNet/"]
-RUN dotnet restore "./WebApps/AspnetRunBasicsNet/AspnetRunBasicsNet.csproj"
+COPY ["WebApps/AspnetRunBasics/AspnetRunBasics.csproj", "WebApps/AspnetRunBasics/"]
+RUN dotnet restore "./WebApps/AspnetRunBasics/AspnetRunBasics.csproj"
 COPY . .
-WORKDIR "/src/WebApps/AspnetRunBasicsNet"
-RUN dotnet build "./AspnetRunBasicsNet.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/WebApps/AspnetRunBasics"
+RUN dotnet build "./AspnetRunBasics.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./AspnetRunBasicsNet.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./AspnetRunBasics.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "AspnetRunBasicsNet.dll"]
+ENTRYPOINT ["dotnet", "AspnetRunBasics.dll"]
