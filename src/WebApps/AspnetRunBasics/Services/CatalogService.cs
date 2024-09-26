@@ -6,14 +6,18 @@ namespace AspnetRunBasics.Services
     public class CatalogService : ICatalogService
     {
         private readonly HttpClient _client;
+        private readonly ILogger<CatalogService> _logger;
 
-        public CatalogService(HttpClient httpClient)
+        public CatalogService(HttpClient httpClient, ILogger<CatalogService> logger)
         {
             _client = httpClient;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<CatalogModel>> GetCatalog()
         {
+            _logger.LogDebug($"get catalog products from {_client.BaseAddress}");
+
             var response = await _client.GetAsync("/Catalog");
             return await response.ReadContentAs<List<CatalogModel>>();
         }
