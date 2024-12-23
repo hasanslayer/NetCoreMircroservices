@@ -19,6 +19,8 @@ namespace AspnetRunBasics
             builder.Services.AddHttpClient<IOrderService, OrderService>(c => c.BaseAddress = new Uri(builder.Configuration["ApiSettings:GatewayAddress"]));
             builder.Services.AddRazorPages();
 
+            
+
             using var log = new LoggerConfiguration()
             .Enrich.FromLogContext()
             .Enrich.WithMachineName()
@@ -31,9 +33,12 @@ namespace AspnetRunBasics
                      NumberOfShards = 2,
                      NumberOfReplicas = 1
                  })
-            .Enrich.WithProperty("Environment",builder.Environment.EnvironmentName)
+            .Enrich.WithProperty("Environment", builder.Environment.EnvironmentName)
             .ReadFrom.Configuration(builder.Configuration)
             .CreateLogger();
+
+
+            builder.Services.AddSerilog(log);
 
             var app = builder.Build();
 
