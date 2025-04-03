@@ -1,5 +1,7 @@
+using Common.Logging;
 using Discount.API.Extensions;
 using Discount.API.Repositories;
+using Serilog;
 
 namespace Discount.API
 {
@@ -10,6 +12,9 @@ namespace Discount.API
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+            builder.Services.AddSerilog(Serilogger.Configure(builder));
+
             builder.Services.AddAuthorization();
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
