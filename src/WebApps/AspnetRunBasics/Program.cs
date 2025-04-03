@@ -14,6 +14,10 @@ namespace AspnetRunBasics
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+            
+            builder.Services.AddSerilog(Serilogger.Configure(builder));
+
             builder.Services.AddTransient<LoggingDelegatingHandler>();
 
             builder.Services.AddHttpClient<ICatalogService, CatalogService>(
@@ -27,9 +31,7 @@ namespace AspnetRunBasics
                 .AddHttpMessageHandler<LoggingDelegatingHandler>();
             builder.Services.AddRazorPages();
 
-            var log = Serilogger.Configure(builder);
-
-            builder.Services.AddSerilog(log);
+           
 
             var app = builder.Build();
 

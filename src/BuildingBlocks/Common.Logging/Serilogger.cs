@@ -15,7 +15,9 @@ namespace Common.Logging
     {
         public static Logger Configure(WebApplicationBuilder builder)
         {
-            using var log = new LoggerConfiguration()
+            
+
+            var loggerConfig = new LoggerConfiguration()
             .Enrich.FromLogContext()
             .Enrich.WithMachineName()
             .WriteTo.Console()
@@ -25,13 +27,16 @@ namespace Common.Logging
                      IndexFormat = $"applogs-{Assembly.GetExecutingAssembly().GetName().Name.ToLower().Replace(".", "-")}-{builder.Environment.EnvironmentName?.ToLower().Replace(".", "-")}-logs-{DateTime.UtcNow:yyyy-MM}",
                      AutoRegisterTemplate = true,
                      NumberOfShards = 2,
-                     NumberOfReplicas = 1
+                     NumberOfReplicas = 1,
+                     AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv7,
+                     OverwriteTemplate = true,
                  })
             .Enrich.WithProperty("Environment", builder.Environment.EnvironmentName)
             .ReadFrom.Configuration(builder.Configuration)
             .CreateLogger();
 
-            return log;
+
+            return loggerConfig;
         }
     }
 }
