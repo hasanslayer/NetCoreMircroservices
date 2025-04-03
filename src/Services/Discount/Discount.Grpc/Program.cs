@@ -1,7 +1,9 @@
+using Common.Logging;
 using Discount.Grpc.Extensions;
 using Discount.Grpc.Mapper;
 using Discount.Grpc.Repositories;
 using Discount.Grpc.Services;
+using Serilog;
 
 namespace Discount.Grpc
 {
@@ -15,6 +17,9 @@ namespace Discount.Grpc
             // For instructions on how to configure Kestrel and gRPC clients on macOS, visit https://go.microsoft.com/fwlink/?linkid=2099682
 
             // Add services to the container.
+
+            builder.Services.AddSerilog(Serilogger.Configure(builder));
+
             builder.Services.AddGrpc();
             builder.Services.AddAutoMapper(typeof(DiscountProfile));
             builder.Services.AddScoped<IDiscountRepository, DiscountRepository>();
