@@ -32,6 +32,7 @@ namespace Common.Logging
                      OverwriteTemplate = true,
                  })
             .Enrich.WithProperty("Environment", builder.Environment.EnvironmentName)
+            .Enrich.WithProperty("Application", builder.Environment.ApplicationName)
             .ReadFrom.Configuration(builder.Configuration)
             .CreateLogger();
 

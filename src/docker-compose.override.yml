@@ -51,7 +51,7 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=admin1234567
     restart: always
     ports:
-      - "5050:80"
+      - "5050:8080"
     volumes:
       - pgadmin_data:/root/.pgadmin 
   
@@ -71,23 +71,25 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=mongodb://catalogdb:27017"
+      - "ElasticConfiguration:Uri=http://elasticsearch:9200" # - http://container_name_of_elasticsearch:port_of_elasticsearch
     depends_on:
       - catalogdb
     ports:
-      - "8000:80"
+      - "8000:8080"
 
   basket.api:
     container_name: basket.api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "CacheSettings:ConnectionString=basketdb:6379"
-      - "GrpcSettings:DiscountUrl=http://discount.grpc" 
+      - "GrpcSettings:DiscountUrl=http://discount.grpc:8080" 
       - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
+      - "ElasticConfiguration:Uri=http://elasticsearch:9200" # - http://container_name_of_elasticsearch:port_of_elasticsearch
     depends_on:
       - basketdb 
       - rabbitmq
     ports:
-      - "8001:80"
+      - "8001:8080"
 
 
   discount.api:
@@ -95,21 +97,24 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=Server=discountdb;Port=5432;Database=DiscountDb;User Id=admin;Password=admin1234567;" 
+      - "ElasticConfiguration:Uri=http://elasticsearch:9200" # - http://container_name_of_elasticsearch:port_of_elasticsearch
+
     depends_on:
       - discountdb 
     ports:
-      - "8002:80"
+      - "8002:8080"
 
 
   discount.grpc:
     container_name: discount.grpc
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - "DatabaseSettings:ConnectionString=Server=discountdb;Port=5432;Database=DiscountDb;User Id=admin;Password=admin1234567;" 
+      - "DatabaseSettings:ConnectionString=Server=discountdb;Port=5432;Database=DiscountDb;User Id=admin;Password=admin1234567;"
+      - "ElasticConfiguration:Uri=http://elasticsearch:9200" # - http://container_name_of_elasticsearch:port_of_elasticsearch
     depends_on:
       - discountdb 
     ports:
-      - "8003:80"
+      - "8003:8080"
        
   ordering.api:
     container_name: ordering.api
@@ -117,24 +122,26 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ConnectionStrings:OrderingConnectionString=Server=orderdb;Database=OrderDb;User Id=sa;Password=Admin1234567;"
       - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
+      - "ElasticConfiguration:Uri=http://elasticsearch:9200" # - http://container_name_of_elasticsearch:port_of_elasticsearch
     depends_on:
       - orderdb 
       - rabbitmq
     ports:
-      - "8004:80"
+      - "8004:8080"
 
 
   ocelotapigw:
     container_name: ocelotapigw
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - "ElasticConfiguration:Uri=http://elasticsearch:9200" # - http://container_name_of_elasticsearch:port_of_elasticsearch
     depends_on:
       - catalog.api 
       - basket.api
       - discount.api
       - ordering.api
     ports:
-      - "8010:80"
+      - "8010:8080"
 
   shopping.aggregator:
     container_name: shopping.aggregator
@@ -143,19 +150,21 @@ services:
       - "ApiSettings:CatalogUrl=http://catalog.api"
       - "ApiSettings:BasketUrl=http://basket.api"
       - "ApiSettings:OrderingUrl=http://ordering.api"
+      - "ElasticConfiguration:Uri=http://elasticsearch:9200" # - http://container_name_of_elasticsearch:port_of_elasticsearch
     depends_on:
       - catalog.api
       - basket.api
       - ordering.api
     ports:
-      - "8005:80"
+      - "8005:8080"
 
 
   aspnetrunbasics:
     container_name: aspnetrunbasics
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - "ApiSettings:GatewayAddress=http://ocelotapigw" # from ocelotapigw container name
+      - "ApiSettings:GatewayAddress=http://ocelotapigw:8080" # from ocelotapigw container name
+      - "ElasticConfiguration:Uri=http://elasticsearch:9200" # - http://container_name_of_elasticsearch:port_of_elasticsearch
     depends_on:
       - ocelotapigw
       - catalog.api
@@ -164,7 +173,7 @@ services:
       - ordering.api
 
     ports:
-      - "8006:80"
+      - "8006:8080"
 
   elasticsearch:
     container_name: elasticsearch

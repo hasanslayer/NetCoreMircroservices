@@ -7,7 +7,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "catalog.api", // container name for Development with docker container.
-          "Port": 80 // auto detect by docker network so we set it as default port : 80
+          "Port": 8080 // auto detect by docker network so we set it as default port : 8080
         }
       ],
       "UpstreamPathTemplate": "/Catalog",
@@ -24,7 +24,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "catalog.api",
-          "Port": 80
+          "Port": 8080
         }
       ],
       "UpstreamPathTemplate": "/Catalog/{id}",
@@ -36,7 +36,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "catalog.api",
-          "Port": 80
+          "Port": 8080
         }
       ],
       "UpstreamPathTemplate": "/Catalog/GetProductByCategory/{category}",
@@ -49,7 +49,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "basket.api",
-          "Port": 80
+          "Port": 8080
         }
       ],
       "UpstreamPathTemplate": "/Basket/{userName}",
@@ -61,7 +61,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "basket.api",
-          "Port": 80
+          "Port": 8080
         }
       ],
       "UpstreamPathTemplate": "/Basket",
@@ -73,7 +73,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "basket.api",
-          "Port": 80
+          "Port": 8080
         }
       ],
       "UpstreamPathTemplate": "/Basket/Checkout",
@@ -93,7 +93,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "discount.api",
-          "Port": 80
+          "Port": 8080
         }
       ],
       "UpstreamPathTemplate": "/Discount/{productName}",
@@ -105,7 +105,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "discount.api",
-          "Port": 80
+          "Port": 8080
         }
       ],
       "UpstreamPathTemplate": "/Discount/{productName}",
@@ -118,7 +118,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "ordering.api",
-          "Port": 80
+          "Port": 8080
         }
       ],
       "UpstreamPathTemplate": "/Orders/{userName}",
