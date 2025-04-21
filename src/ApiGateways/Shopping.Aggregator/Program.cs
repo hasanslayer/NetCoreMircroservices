@@ -1,4 +1,5 @@
 using Common.Logging;
+using Polly;
 using Serilog;
 using Shopping.Aggregator.Services;
 
@@ -26,9 +27,15 @@ namespace Shopping.Aggregator
             builder.Services.AddHttpClient<ICatalogService, CatalogService>(c =>
                 c.BaseAddress = new Uri(builder.Configuration["ApiSettings:CatalogUrl"]))
                 .AddHttpMessageHandler<LoggingDelegatingHandler>();
+
             builder.Services.AddHttpClient<IBasketService, BasketService>(c =>
                 c.BaseAddress = new Uri(builder.Configuration["ApiSettings:BasketUrl"]))
-                .AddHttpMessageHandler<LoggingDelegatingHandler>();
+                .AddHttpMessageHandler<LoggingDelegatingHandler>()
+                .AddTransientHttpErrorPolicy(
+                policy => policy.WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(2))
+                );
+
+
             builder.Services.AddHttpClient<IOrderService, OrderService>(c =>
                 c.BaseAddress = new Uri(builder.Configuration["ApiSettings:OrderingUrl"]))
                 .AddHttpMessageHandler<LoggingDelegatingHandler>();
