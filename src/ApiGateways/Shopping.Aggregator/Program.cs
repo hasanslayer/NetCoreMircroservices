@@ -1,6 +1,8 @@
 using Common.Logging;
 using Polly;
+using Polly.Extensions.Http;
 using Serilog;
+using Shopping.Aggregator.Extensions;
 using Shopping.Aggregator.Services;
 
 namespace Shopping.Aggregator
@@ -13,7 +15,7 @@ namespace Shopping.Aggregator
 
             // Add services to the container.
 
-            builder.Services.AddSerilog(Serilogger.Configure(builder));
+            Log.Logger = Serilogger.Configure(builder);
 
             builder.Services.AddTransient<LoggingDelegatingHandler>();
 
@@ -26,21 +28,21 @@ namespace Shopping.Aggregator
 
             builder.Services.AddHttpClient<ICatalogService, CatalogService>(c =>
                 c.BaseAddress = new Uri(builder.Configuration["ApiSettings:CatalogUrl"]))
-                .AddHttpMessageHandler<LoggingDelegatingHandler>();
+                .AddHttpMessageHandler<LoggingDelegatingHandler>()
+                .AddPolicyHandler(PolicyExtensions.GetRetryPolicy())
+                .AddPolicyHandler(PolicyExtensions.GetCircuitBreakerPolicy());
 
             builder.Services.AddHttpClient<IBasketService, BasketService>(c =>
                 c.BaseAddress = new Uri(builder.Configuration["ApiSettings:BasketUrl"]))
                 .AddHttpMessageHandler<LoggingDelegatingHandler>()
-                .AddTransientHttpErrorPolicy(
-                policy => policy.WaitAndRetryAsync(3, _ => TimeSpan.FromSeconds(2))
-                ).AddTransientHttpErrorPolicy(
-                policy => policy.CircuitBreakerAsync(5,TimeSpan.FromSeconds(30))
-                );
-
+                .AddPolicyHandler(PolicyExtensions.GetRetryPolicy())
+                .AddPolicyHandler(PolicyExtensions.GetCircuitBreakerPolicy());
 
             builder.Services.AddHttpClient<IOrderService, OrderService>(c =>
                 c.BaseAddress = new Uri(builder.Configuration["ApiSettings:OrderingUrl"]))
-                .AddHttpMessageHandler<LoggingDelegatingHandler>();
+                .AddHttpMessageHandler<LoggingDelegatingHandler>()
+                .AddPolicyHandler(PolicyExtensions.GetRetryPolicy())
+                .AddPolicyHandler(PolicyExtensions.GetCircuitBreakerPolicy());
 
             var app = builder.Build();
 
