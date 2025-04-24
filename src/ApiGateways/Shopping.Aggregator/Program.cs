@@ -1,6 +1,4 @@
 using Common.Logging;
-using Polly;
-using Polly.Extensions.Http;
 using Serilog;
 using Shopping.Aggregator.Extensions;
 using Shopping.Aggregator.Services;
