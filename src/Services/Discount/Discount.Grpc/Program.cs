@@ -18,7 +18,7 @@ namespace Discount.Grpc
 
             // Add services to the container.
 
-            builder.Services.AddSerilog(Serilogger.Configure(builder));
+            Log.Logger = Serilogger.Configure(builder);
 
             builder.Services.AddGrpc();
             builder.Services.AddAutoMapper(typeof(DiscountProfile));

@@ -13,7 +13,7 @@ namespace Catalog.API
 
             // Add services to the container.
 
-            builder.Services.AddSerilog(Serilogger.Configure(builder));
+            Log.Logger = Serilogger.Configure(builder);
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -14,12 +14,11 @@ namespace Ordering.API.Extensions
             using (var scope = webApplication.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
-                var logger = services.GetRequiredService<ILogger<TContext>>();
                 var context = services.GetService<TContext>();
 
                 try
                 {
-                    logger.LogInformation("Migrating database associated with context {DbContextName}", typeof(TContext).Name);
+                    Log.Information("Migrating database associated with context {DbContextName}", typeof(TContext).Name);
 
                     // apply polly retry policy for migration
                     var retry = Policy.Handle<SqlException>()

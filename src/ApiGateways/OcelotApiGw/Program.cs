@@ -14,7 +14,7 @@ builder.Configuration.AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}
 
 builder.Services.AddOcelot().AddCacheManager(x => x.WithDictionaryHandle());
 
-builder.Services.AddSerilog(Serilogger.Configure(builder));
+Log.Logger = Serilogger.Configure(builder);
 
 var app = builder.Build();
 app.UseRouting();

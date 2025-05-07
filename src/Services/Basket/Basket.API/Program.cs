@@ -16,7 +16,7 @@ namespace Basket.API
 
             // Add services to the container.
 
-            builder.Services.AddSerilog(Serilogger.Configure(builder));
+            Log.Logger = Serilogger.Configure(builder);
 
             builder.Services.AddAuthorization();
             builder.Services.AddStackExchangeRedisCache(options =>
