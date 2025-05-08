@@ -1,6 +1,9 @@
 using Common.Logging;
 using Discount.API.Extensions;
 using Discount.API.Repositories;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Serilog;
 
 namespace Discount.API
@@ -22,6 +25,8 @@ namespace Discount.API
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddScoped<IDiscountRepository, DiscountRepository>();
+            builder.Services.AddHealthChecks()
+                            .AddNpgSql(builder.Configuration["DatabaseSettings:ConnectionString"]);
 
             var app = builder.Build();
             app.MigrateDatabase<Program>();
@@ -37,6 +42,12 @@ namespace Discount.API
             app.UseAuthorization();
 
             app.MapControllers();
+            app.UseHealthChecks("/hc", new HealthCheckOptions
+            {
+                // to return as a json format
+                Predicate = _ => true,
+                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+            });
             app.Run();
         }
     }
