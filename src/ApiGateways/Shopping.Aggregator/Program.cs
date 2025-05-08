@@ -1,4 +1,7 @@
 using Common.Logging;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Serilog;
 using Shopping.Aggregator.Extensions;
 using Shopping.Aggregator.Services;
@@ -42,6 +45,11 @@ namespace Shopping.Aggregator
                 .AddPolicyHandler(PolicyExtensions.GetRetryPolicy())
                 .AddPolicyHandler(PolicyExtensions.GetCircuitBreakerPolicy());
 
+            builder.Services.AddHealthChecks()
+                            .AddUrlGroup(new Uri($"{builder.Configuration["ApiSettings:CatalogUrl"]}/swagger/index.html"), "Catalog.API", HealthStatus.Degraded)
+                            .AddUrlGroup(new Uri($"{builder.Configuration["ApiSettings:BasketUrl"]}/swagger/index.html"), "Basket.API", HealthStatus.Degraded)
+                            .AddUrlGroup(new Uri($"{builder.Configuration["ApiSettings:OrderingUrl"]}/swagger/index.html"), "Ordering.API", HealthStatus.Degraded);
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -56,6 +64,12 @@ namespace Shopping.Aggregator
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => endpoints.MapControllers());
+            app.UseHealthChecks("/hc", new HealthCheckOptions
+            {
+                // to return as a json format
+                Predicate = _ => true,
+                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+            });
 
             app.Run();
         }
