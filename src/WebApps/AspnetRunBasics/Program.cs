@@ -1,5 +1,8 @@
 using AspnetRunBasics.Services;
 using Common.Logging;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Serilog;
 using Shopping.Aggregator.Extensions;
 
@@ -37,6 +40,8 @@ namespace AspnetRunBasics
                 .AddPolicyHandler(PolicyExtensions.GetCircuitBreakerPolicy());
 
             builder.Services.AddRazorPages();
+            builder.Services.AddHealthChecks()
+                            .AddUrlGroup(new Uri(builder.Configuration["ApiSettings:GatewayAddress"]), "Ocelot API Gw", HealthStatus.Degraded);
 
 
 
@@ -54,6 +59,12 @@ namespace AspnetRunBasics
             app.UseAuthorization();
 
             app.MapRazorPages();
+            app.UseHealthChecks("/hc", new HealthCheckOptions
+            {
+                // to return as a json format
+                Predicate = _ => true,
+                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+            });
 
             app.Run();
         }
