@@ -1,6 +1,9 @@
 using Common.Logging;
 using EventBus.Messages.Common;
+using HealthChecks.UI.Client;
 using MassTransit;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Configuration;
 using Ordering.API.EventBussConsumer;
 using Ordering.API.Extensions;
 using Ordering.Application;
@@ -37,7 +40,6 @@ namespace Ordering.API
                 config.UsingRabbitMq((context, configurator) =>
                 {
                     configurator.Host(builder.Configuration["EventBusSettings:HostAddress"]); // username and password is : guest
-
                     configurator.ReceiveEndpoint(EventBusConstants.BasketCheckoutQueue, c =>
                      {
                          c.ConfigureConsumer<BasketCheckoutConsumer>(context);
@@ -45,6 +47,8 @@ namespace Ordering.API
                 });
             });
             builder.Services.AddMassTransitHostedService();
+            builder.Services.AddHealthChecks()
+                            .AddSqlServer(builder.Configuration.GetConnectionString("OrderingConnectionString"));
 
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -68,6 +72,12 @@ namespace Ordering.API
 
             app.UseAuthorization();
             app.MapControllers();
+            app.UseHealthChecks("/hc", new HealthCheckOptions
+            {
+                // to return as a json format
+                Predicate = _ => true,
+                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+            });
             app.Run();
         }
     }
