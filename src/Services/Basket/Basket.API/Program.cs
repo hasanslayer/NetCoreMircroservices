@@ -2,7 +2,10 @@ using Basket.API.GrpcServices;
 using Basket.API.Repositories;
 using Common.Logging;
 using Discount.Grpc.Protos;
+using HealthChecks.UI.Client;
 using MassTransit;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Serilog;
 using System.Reflection;
 
@@ -42,9 +45,12 @@ namespace Basket.API
                 config.UsingRabbitMq((context, configurator) =>
                 {
                     configurator.Host(builder.Configuration["EventBusSettings:HostAddress"]); // username and password is : guest
+                    configurator.UseHealthCheck(context); // for health check of rabbitMQ
                 });
             });
             builder.Services.AddMassTransitHostedService();
+            builder.Services.AddHealthChecks()
+                            .AddRedis(builder.Configuration["CacheSettings:ConnectionString"], "Redist Health", HealthStatus.Degraded);
 
             var app = builder.Build();
 
@@ -58,6 +64,12 @@ namespace Basket.API
             app.UseAuthorization();
 
             app.MapControllers();
+            app.MapHealthChecks("/hc", new HealthCheckOptions
+            {
+                // to return as a json format
+                Predicate = _ => true,
+                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+            });
 
             app.Run();
         }
