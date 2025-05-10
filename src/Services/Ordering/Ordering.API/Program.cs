@@ -4,6 +4,8 @@ using HealthChecks.UI.Client;
 using MassTransit;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Configuration;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Ordering.API.EventBussConsumer;
 using Ordering.API.Extensions;
 using Ordering.Application;
@@ -49,6 +51,20 @@ namespace Ordering.API
             builder.Services.AddMassTransitHostedService();
             builder.Services.AddHealthChecks()
                             .AddSqlServer(builder.Configuration.GetConnectionString("OrderingConnectionString"));
+
+            builder.Services.AddOpenTelemetry()
+            .WithTracing(tracerProviderBuilder =>
+            {
+                tracerProviderBuilder
+                    .AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(Assembly.GetEntryAssembly()?.GetName().Name ?? "Unknown Service"))
+                    .AddZipkinExporter(options =>
+                    {
+                        //options.Endpoint = new Uri("http://localhost:9411/api/v2/spans"); // Default Zipkin endpoint
+                        options.Endpoint = new Uri("http://zipkin:9411/api/v2/spans"); // after add zipkin into docker compose
+                    });
+            });
 
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

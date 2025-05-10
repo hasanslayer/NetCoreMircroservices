@@ -6,6 +6,8 @@ using HealthChecks.UI.Client;
 using MassTransit;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Serilog;
 using System.Reflection;
 
@@ -51,6 +53,20 @@ namespace Basket.API
             builder.Services.AddMassTransitHostedService();
             builder.Services.AddHealthChecks()
                             .AddRedis(builder.Configuration["CacheSettings:ConnectionString"], "Redist Health", HealthStatus.Degraded);
+
+            builder.Services.AddOpenTelemetry()
+            .WithTracing(tracerProviderBuilder =>
+            {
+                tracerProviderBuilder
+                    .AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(Assembly.GetEntryAssembly()?.GetName().Name ?? "Unknown Service"))
+                    .AddZipkinExporter(options =>
+                    {
+                        //options.Endpoint = new Uri("http://localhost:9411/api/v2/spans"); // Default Zipkin endpoint
+                        options.Endpoint = new Uri("http://zipkin:9411/api/v2/spans"); // after add zipkin into docker compose
+                    });
+            });
 
             var app = builder.Build();
 

@@ -1,8 +1,11 @@
+using System.Reflection;
 using Common.Logging;
 using Discount.Grpc.Extensions;
 using Discount.Grpc.Mapper;
 using Discount.Grpc.Repositories;
 using Discount.Grpc.Services;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Serilog;
 
 namespace Discount.Grpc
@@ -23,6 +26,19 @@ namespace Discount.Grpc
             builder.Services.AddGrpc();
             builder.Services.AddAutoMapper(typeof(DiscountProfile));
             builder.Services.AddScoped<IDiscountRepository, DiscountRepository>();
+            builder.Services.AddOpenTelemetry()
+            .WithTracing(tracerProviderBuilder =>
+            {
+                tracerProviderBuilder
+                    .AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(Assembly.GetEntryAssembly()?.GetName().Name ?? "Unknown Service"))
+                    .AddZipkinExporter(options =>
+                    {
+                        //options.Endpoint = new Uri("http://localhost:9411/api/v2/spans"); // Default Zipkin endpoint
+                        options.Endpoint = new Uri("http://zipkin:9411/api/v2/spans"); // after add zipkin into docker compose
+                    });
+            });
 
             var app = builder.Build();
             app.MigrateDatabase<Program>();
