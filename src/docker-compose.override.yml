@@ -67,7 +67,7 @@ services:
       - portainer_data:/data
 
   catalog.api:
-    container_name: catalog.api
+    container_name: catalog-api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=mongodb://catalogdb:27017"
