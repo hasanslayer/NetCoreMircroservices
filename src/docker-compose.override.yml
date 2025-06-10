@@ -78,7 +78,7 @@ services:
       - "8000:8080"
 
   basket.api:
-    container_name: basket.api
+    container_name: basket-api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "CacheSettings:ConnectionString=basketdb:6379"
@@ -93,7 +93,7 @@ services:
 
 
   discount.api:
-    container_name: discount.api
+    container_name: discount-api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=Server=discountdb;Port=5432;Database=DiscountDb;User Id=admin;Password=admin1234567;" 
@@ -106,7 +106,7 @@ services:
 
 
   discount.grpc:
-    container_name: discount.grpc
+    container_name: discount-grpc
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "DatabaseSettings:ConnectionString=Server=discountdb;Port=5432;Database=DiscountDb;User Id=admin;Password=admin1234567;"
@@ -117,7 +117,7 @@ services:
       - "8003:8080"
        
   ordering.api:
-    container_name: ordering.api
+    container_name: ordering-api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ConnectionStrings:OrderingConnectionString=Server=orderdb;Database=OrderDb;User Id=sa;Password=Admin1234567;Encrypt=False;TrustServerCertificate=True"
@@ -144,7 +144,7 @@ services:
       - "8010:8080"
 
   shopping.aggregator:
-    container_name: shopping.aggregator
+    container_name: shopping-aggregator
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ApiSettings:CatalogUrl=http://catalog.api:8080"

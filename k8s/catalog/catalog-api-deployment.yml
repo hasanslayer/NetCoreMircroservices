@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalog-api-deployment
+  labels:
+    app: catalog.api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: catalog.api
+  template:
+    metadata:
+      labels:
+        app: catalog.api
+    spec:
+      containers:
+        - name: catalog-api # should not have '.' in the name
+          image: hasanslayer/catalog-api:latest # <-- Replace with your image name
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
+            - name: DatabaseSettings__ConnectionString
+              valueFrom:
+                configMapKeyRef:
+                  name: mongo-configmap
+                  key: connection_string
+            - name: ElasticConfiguration__Uri
+              value: http://elasticsearch-service:9200
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalogapi-service
+spec:
+  selector:
+    app: catalog.api
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 31000
+  type: NodePort
