@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: catalog-api-deployment
+  name: discount-grpc-deployment
   labels:
-    app: catalog.api
+    app: discount.grpc
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: catalog.api
+      app: discount.grpc
   template:
     metadata:
       labels:
-        app: catalog.api
+        app: discount.grpc
     spec:
       containers:
-        - name: catalog-api # should not have '.' in the name
-          image: hasanslayer/catalog-api:latest # <-- Replace with your image name
+        - name: discount-grpc # should not have '.' in the name
+          image: hasanslayer/discount-grpc:latest # <-- Replace with your image name
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -26,7 +26,7 @@ spec:
             - name: DatabaseSettings__ConnectionString
               valueFrom:
                 configMapKeyRef:
-                  name: mongo-configmap
+                  name: postgres-configmap
                   key: connection_string
             - name: ElasticConfiguration__Uri
               value: http://elasticsearch-service:9200
@@ -41,13 +41,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: catalogapi-service
+  name: discountgrpc-service
 spec:
   selector:
-    app: catalog.api
+    app: discount.grpc
   ports:
     - protocol: TCP
       port: 8080
       targetPort: 8080
-      nodePort: 31000
+      nodePort: 31002
   type: NodePort

@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: catalog-api-deployment
+  name: discount-api-deployment
   labels:
-    app: catalog.api
+    app: discount.api
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: catalog.api
+      app: discount.api
   template:
     metadata:
       labels:
-        app: catalog.api
+        app: discount.api
     spec:
       containers:
-        - name: catalog-api # should not have '.' in the name
-          image: hasanslayer/catalog-api:latest # <-- Replace with your image name
+        - name: discount-api # should not have '.' in the name
+          image: hasanslayer/discount-api:latest # <-- Replace with your image name
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -26,7 +26,7 @@ spec:
             - name: DatabaseSettings__ConnectionString
               valueFrom:
                 configMapKeyRef:
-                  name: mongo-configmap
+                  name: postgres-configmap
                   key: connection_string
             - name: ElasticConfiguration__Uri
               value: http://elasticsearch-service:9200
@@ -41,13 +41,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: catalogapi-service
+  name: discountapi-service
 spec:
   selector:
-    app: catalog.api
+    app: discount.api
   ports:
     - protocol: TCP
       port: 8080
       targetPort: 8080
-      nodePort: 31000
+      nodePort: 31001
   type: NodePort
