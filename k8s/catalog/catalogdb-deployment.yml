@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: catalog-api-deployment
+  name: catalogdb-deployment
   labels:
-    app: catalog.api
+    app: catalogdb
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: catalog.api
+      app: catalogdb
   template:
     metadata:
       labels:
-        app: catalog.api
+        app: catalogdb
     spec:
       containers:
-        - name: catalog-api # should not have '.' in the name
-          image: hasanslayer/catalog-api:latest # <-- Replace with your image name
+        - name: catalogdb # should not have '.' in the name
+          image: mongo:latest # <-- Replace with your image name
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -32,22 +32,21 @@ spec:
               value: http://elasticsearch-service:9200
           resources:
             requests:
-              memory: "64Mi"
+              memory: "256Mi"
               cpu: "250m"
             limits:
-              memory: "128Mi"
+              memory: "512Mi"
               cpu: "500m"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: catalogapi-service
+  name: catalogdb-service
 spec:
   selector:
-    app: catalog.api
+    app: catalogdb
   ports:
-    - protocol: TCP
-      port: 8080
-      targetPort: 8080
-      nodePort: 31000
-  type: NodePort
+  - protocol: TCP
+    port: 27017
+    targetPort: 27017
+  type: ClusterIP
