@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: basket-api-deployment
+  labels:
+    app: basket.api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: basket.api
+  template:
+    metadata:
+      labels:
+        app: basket.api
+    spec:
+      containers:
+        - name: basket-api # should not have '.' in the name
+          image: hasanslayer/basket-api:latest # <-- Replace with your image name
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
+            - name: CacheSettings__ConnectionString
+              valueFrom:
+                configMapKeyRef:
+                  name: basket-configmap
+                  key: cache_settings
+            - name: GrpcSettings__DiscountUrl
+              valueFrom:
+                configMapKeyRef:
+                  name: basket-configmap
+                  key: grpc_settings
+            - name: EventBusSettings__HostAddress
+              valueFrom:
+                configMapKeyRef:
+                  name: basket-configmap
+                  key: eventBus_settings
+            - name: ElasticConfiguration__Uri
+              value: http://elasticsearch-service:9200
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: basketapi-service
+spec:
+  selector:
+    app: basket.api
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 31003
+  type: NodePort

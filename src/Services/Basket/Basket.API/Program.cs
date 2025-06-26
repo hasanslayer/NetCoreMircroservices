@@ -1,4 +1,4 @@
-using Basket.API.GrpcServices;
+﻿using Basket.API.GrpcServices;
 using Basket.API.Repositories;
 using Common.Logging;
 using Discount.Grpc.Protos;
@@ -18,6 +18,9 @@ namespace Basket.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            // ✅ Enable HTTP/2 over unencrypted connections (needed for gRPC over http://)
+            AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
 
             // Add services to the container.
 

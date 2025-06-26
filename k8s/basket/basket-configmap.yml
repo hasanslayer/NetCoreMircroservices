@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata: 
+  name: basket-configmap
+data:
+  cache_settings: basketdb-service:6379
+  grpc_settings: http://discountgrpc-service:8080
+  eventBus_settings: amqp://guest:guest@rabbitmq:5672
