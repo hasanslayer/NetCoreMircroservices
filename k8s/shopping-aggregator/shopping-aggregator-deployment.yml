@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shopping-aggregator-deployment
+  labels:
+    app: shopping-aggregator.api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shopping-aggregator.api
+  template:
+    metadata:
+      labels:
+        app: shopping-aggregator.api
+    spec:
+      containers:
+        - name: shopping-aggregator-api # should not have '.' in the name
+          image: hasanslayer/shoppingaggregator:latest # <-- Replace with your image name
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
+            - name: ApiSettings__CatalogUrl
+              valueFrom:
+                configMapKeyRef:
+                  name: shopping-aggregator-configmap
+                  key: CatalogUrl
+            - name: ApiSettings__BasketUrl
+              valueFrom:
+                configMapKeyRef:
+                  name: shopping-aggregator-configmap
+                  key: BasketUrl
+            - name: ApiSettings__OrderingUrl
+              valueFrom:
+                configMapKeyRef:
+                  name: shopping-aggregator-configmap
+                  key: OrderingUrl
+            - name: ElasticConfiguration__Uri
+              value: http://elasticsearch-service:9200
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shopping-aggregator-service
+spec:
+  selector:
+    app: shopping-aggregator.api
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 31006
+  type: NodePort

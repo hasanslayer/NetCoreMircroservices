@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ocelotapigw-deployment
+  labels:
+    app: ocelotapigw
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ocelotapigw
+  template:
+    metadata:
+      labels:
+        app: ocelotapigw
+    spec:
+      containers:
+        - name: ocelotapigw # should not have '.' in the name
+          image: hasanslayer/ocelotapigw:latest # <-- Replace with your image name
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
+            - name: ElasticConfiguration__Uri
+              value: http://elasticsearch-service:9200
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ocelotapigw-service
+spec:
+  selector:
+    app: ocelotapigw
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 31005
+  type: NodePort

@@ -6,7 +6,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "catalog.api", // container name for Development with docker container.
+          "Host": "catalogapi-service", // container name for Development with docker container. // should match service name in deployment to make it work after deploy on kubernetes
           "Port": 8080 // auto detect by docker network so we set it as default port : 8080
         }
       ],
@@ -23,7 +23,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "catalog.api",
+          "Host": "catalogapi-service",
           "Port": 8080
         }
       ],
@@ -35,7 +35,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "catalog.api",
+          "Host": "catalogapi-service",
           "Port": 8080
         }
       ],
@@ -48,7 +48,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "basket.api",
+          "Host": "basketapi-service",
           "Port": 8080
         }
       ],
@@ -60,7 +60,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "basket.api",
+          "Host": "basketapi-service",
           "Port": 8080
         }
       ],
@@ -72,7 +72,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "basket.api",
+          "Host": "basketapi-service",
           "Port": 8080
         }
       ],
@@ -92,7 +92,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "discount.api",
+          "Host": "discountapi-service",
           "Port": 8080
         }
       ],
@@ -104,7 +104,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "discount.api",
+          "Host": "discountapi-service",
           "Port": 8080
         }
       ],
@@ -117,7 +117,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "ordering.api",
+          "Host": "ordering-api",
           "Port": 8080
         }
       ],
