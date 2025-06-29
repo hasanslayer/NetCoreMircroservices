@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zipkin-deployment
+  labels:
+    app: zipkin.api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zipkin.api
+  template:
+    metadata:
+      labels:
+        app: zipkin.api
+    spec:
+      containers:
+        - name: zipkin-api # should not have '.' in the name
+          image: openzipkin/zipkin # <-- Replace with your image name
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9411
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zipkin
+spec:
+  selector:
+    app: zipkin.api
+  ports:
+    - protocol: TCP
+      port: 9411
+      targetPort: 9411
+      nodePort: 31011
+  type: NodePort
