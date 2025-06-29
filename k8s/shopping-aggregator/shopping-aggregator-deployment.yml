@@ -39,7 +39,7 @@ spec:
                   name: shopping-aggregator-configmap
                   key: OrderingUrl
             - name: ElasticConfiguration__Uri
-              value: http://elasticsearch-service:9200
+              value: http://elasticsearch:9200
           resources:
             requests:
               memory: "64Mi"

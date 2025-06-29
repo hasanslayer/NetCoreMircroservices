@@ -39,7 +39,7 @@ spec:
                   name: basket-configmap
                   key: eventBus_settings
             - name: ElasticConfiguration__Uri
-              value: http://elasticsearch-service:9200
+              value: http://elasticsearch:9200
           resources:
             requests:
               memory: "64Mi"

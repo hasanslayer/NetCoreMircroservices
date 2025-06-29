@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kibana-deployment
+  labels:
+    app: kibana.api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kibana.api
+  template:
+    metadata:
+      labels:
+        app: kibana.api
+    spec:
+      containers:
+        - name: kibana # should not have '.' in the name
+          image: docker.elastic.co/kibana/kibana:7.9.2 # <-- Replace with your image name
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5601
+          env:
+            - name: ELASTICSEARCH_URL
+              value: http://elasticsearch:9200
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "250m"
+            limits:
+              memory: "2Gi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kibana-service
+spec:
+  selector:
+    app: kibana.api
+  ports:
+    - protocol: TCP
+      port: 5601
+      targetPort: 5601
+      nodePort: 31009
+  type: NodePort
